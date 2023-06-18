@@ -23,11 +23,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Minify static content
+        run: |
+          # Install dependencies
+          npm install terser -g
+          
+          # Minify JS files
+          find . -type f -name '*.js' -exec terser {} -o {} \;
+          
+          # Minify CSS files
+          find . -type f -name '*.css' -exec npx minify {} -o {} \;
+          
+          # Minify HTML files
+          find . -type f -name '*.html' -exec npx html-minifier {} -o {} \;
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Remove .html extension
-        run: |
-          find . -name "*.html" -type f -exec bash -c 'mv "$1" "${1%.html}"' _ {} \;
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
