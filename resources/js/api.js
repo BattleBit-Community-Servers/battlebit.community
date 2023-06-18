@@ -36,19 +36,25 @@ const sortServersBy = (key) => {
 
   document.getElementById('noServersNotice').style.display = 'none';
 
-  const sortedData = [...filteredData].sort((a, b) => {
-    const sortValueA = a[key];
-    const sortValueB = b[key];
+  let sortedData;
 
-    let comparison = 0;
-    if (sortValueA > sortValueB) {
-      comparison = 1;
-    } else if (sortValueA < sortValueB) {
-      comparison = -1;
-    }
+  if (sortKey) {
+    sortedData = [...filteredData].sort((a, b) => {
+      const sortValueA = a[key];
+      const sortValueB = b[key];
 
-    return sortOrder === 'asc' ? comparison : -comparison;
-  });
+      let comparison = 0;
+      if (sortValueA > sortValueB) {
+        comparison = 1;
+      } else if (sortValueA < sortValueB) {
+        comparison = -1;
+      }
+
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  } else {
+    sortedData = filteredData; // No sorting, use the original order from the API
+  }
 
   sortedData.forEach(server => {
     const listItem = document.createElement('li');
@@ -72,9 +78,11 @@ const sortServersBy = (key) => {
   const sortButtons = document.querySelectorAll('#sortButtons button');
   sortButtons.forEach(button => button.classList.remove('active', 'asc', 'desc'));
 
-  // Add active indicator and sort order to the current sort button
-  const currentSortButton = document.getElementById(`sort${key}`);
-  currentSortButton.classList.add('active', sortOrder);
+  if (sortKey) {
+    // Add active indicator and sort order to the current sort button
+    const currentSortButton = document.getElementById(`sort${key}`);
+    currentSortButton.classList.add('active', sortOrder);
+  }
 
   // Update total player count
   const totalPlayers = filteredData.reduce((sum, server) => sum + server.Players, 0);
@@ -107,11 +115,28 @@ const updateToggleButtons = () => {
   toggleCommunityButton.textContent = showCommunityServers ? 'Hide Community Servers' : 'Show Community Servers';
 };
 
+const refreshData = () => {
+  fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
+    .then(response => response.json())
+    .then(data => {
+      serversData = data;
+      sortServersBy(sortKey);
+      updateToggleButtons();
+
+      // Calculate and display total player count
+      const totalPlayers = serversData.reduce((sum, server) => sum + server.Players, 0);
+      document.getElementById('totalPlayers').textContent = totalPlayers;
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
+};
+
 fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
   .then(response => response.json())
   .then(data => {
     serversData = data;
-    sortServersBy('Gamemode');
+    sortServersBy(''); // No initial sorting
     updateToggleButtons();
 
     // Calculate and display total player count
