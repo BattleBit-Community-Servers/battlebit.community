@@ -1,0 +1,23 @@
+/* custom.css */
+
+.hero {
+    margin-bottom: 2rem;
+  }
+  
+  .subtitle {
+    margin-top: 1.5rem;
+  }
+  
+  .dropdown-content {
+    min-width: 200px;
+  }
+  
+  .dropdown-item {
+    padding: 0.5rem 0.75rem;
+    color: #333;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f5f5f5;
+  }
+  

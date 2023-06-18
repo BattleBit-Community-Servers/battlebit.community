@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server List</title>
+  <link rel="stylesheet" href="resources/css/style.css">
+</head>
+<body>
+  <h1>Server List</h1>
+
+  <div id="totalPlayersContainer">
+    Total Players: <span id="totalPlayers">0</span>
+  </div>
+
+  <div id="sortButtons">
+    <button onclick="sortServersBy('Gamemode')" id="sortGamemode">Sort by Gamemode</button>
+    <button onclick="sortServersBy('Players')" id="sortPlayers">Sort by Players</button>
+    <button onclick="sortServersBy('Map')" id="sortMap">Sort by Map</button>
+    <button onclick="sortServersBy('Region')" id="sortRegion">Sort by Region</button>
+  </div>
+
+  <div id="filters">
+    <button onclick="toggleOfficialServers()" id="toggleOfficial">Toggle Official Servers</button>
+    <button onclick="toggleCommunityServers()" id="toggleCommunity">Toggle Community Servers</button>
+    <select id="sizeFilter" onchange="filterBySize()">
+      <option value="">Filter by Size</option>
+      <option value="16">16</option>
+      <option value="32">32</option>
+      <option value="64">64</option>
+      <option value="128">128</option>
+      <option value="254">254</option>
+    </select>
+  </div>
+
+  <div id="noServersNotice" style="display: none;">No servers with that size found.</div>
+
+  <ul id="serverList"></ul>
+
+  <script src="resources/js/api.js"></script>
+</body>
+</html>
