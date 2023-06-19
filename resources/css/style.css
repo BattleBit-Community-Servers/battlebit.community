@@ -47,6 +47,15 @@ li.official {
   color: #fff;
 }
 
+li.community {
+  background-color: #ffa500;
+  color: #000;
+}
+
+.notification {
+  color: #fff;
+}
+
 #refreshButtonContainer button {
   background-color: #007bff;
   color: #fff;
@@ -126,4 +135,11 @@ li.official {
     flex-direction: column;
     align-items: center;
   }
+}
+
+.noscript-container {
+  background-color: #ff0000;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
 }

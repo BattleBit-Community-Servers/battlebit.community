@@ -2,65 +2,61 @@
 <html>
 <head>
   <title>Server List</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
   <link rel="stylesheet" href="resources/css/style.css">
 </head>
 <body>
-  <h1 class="title">Server List</h1>
-
   <div class="container">
+    <h1 class="title">Server List</h1>
+
     <div id="totalPlayersContainer">
       Total Players: <span id="totalPlayers">0</span>
     </div>
 
-    <div class="buttons is-centered">
-      <button onclick="sortServersBy('Gamemode')" id="sortGamemode" class="button">Sort by Gamemode</button>
-      <button onclick="sortServersBy('Players')" id="sortPlayers" class="button">Sort by Players</button>
-      <button onclick="sortServersBy('Map')" id="sortMap" class="button">Sort by Map</button>
-      <button onclick="sortServersBy('Region')" id="sortRegion" class="button">Sort by Region</button>
-      <button onclick="sortServersBy('DayNight')" id="sortDayNight" class="button">Sort by Day/Night</button>
+    <div id="sortButtons">
+      <button onclick="sortServersBy('Gamemode')" id="sortGamemode">Sort by Gamemode</button>
+      <button onclick="sortServersBy('Players')" id="sortPlayers">Sort by Players</button>
+      <button onclick="sortServersBy('Map')" id="sortMap">Sort by Map</button>
+      <button onclick="sortServersBy('Region')" id="sortRegion">Sort by Region</button>
+      <button onclick="sortServersBy('DayNight')" id="sortDayNight">Sort by Day/Night</button>
     </div>
 
-    <div class="field is-grouped is-grouped-centered">
-      <div class="control">
-        <button onclick="toggleOfficialServers()" id="toggleOfficial" class="button">Toggle Official Servers</button>
-      </div>
-      <div class="control">
-        <button onclick="toggleCommunityServers()" id="toggleCommunity" class="button">Toggle Community Servers</button>
-      </div>
-      <div class="control">
-        <div class="select">
-          <select id="sizeFilter" onchange="filterBySize()">
-            <option value="">Filter by Size</option>
-            <option value="16">16</option>
-            <option value="32">32</option>
-            <option value="64">64</option>
-            <option value="128">128</option>
-            <option value="254">254</option>
-          </select>
-        </div>
-      </div>
-      <div class="control">
-        <div class="select">
-          <select id="regionFilter" onchange="filterByRegion()">
-            <option value="">Filter by Region</option>
-            <option value="Europe_Central">Europe Central</option>
-            <option value="America_Central">America Central</option>
-            <option value="Australia_Central">Australia Central</option>
-            <option value="Japan_Central">Japan Central</option>
-            <option value="Brazil_Central">Brazil Central</option>
-          </select>
-        </div>
-      </div>
+    <div id="filters">
+      <button onclick="toggleOfficialServers()" id="toggleOfficial">Toggle Official Servers</button>
+      <button onclick="toggleCommunityServers()" id="toggleCommunity">Toggle Community Servers</button>
+      <select id="regionFilter" onchange="filterByRegion()">
+        <option value="">Filter by Region</option>
+        <option value="Europe_Central">Europe Central</option>
+        <option value="America_Central">America Central</option>
+        <option value="Australia_Central">Australia Central</option>
+        <option value="Japan_Central">Japan Central</option>
+        <option value="Brazil_Central">Brazil Central</option>
+      </select>
+      <select id="sizeFilter" onchange="filterBySize()">
+        <option value="">Filter by Size</option>
+        <option value="16">16</option>
+        <option value="32">32</option>
+        <option value="64">64</option>
+        <option value="128">128</option>
+        <option value="254">254</option>
+      </select>
     </div>
 
-    <div id="noServersNotice" class="notification is-danger" style="display: none;">No servers with that size found.</div>
+    <div id="noServersNotice" style="display: none;"></div>
 
     <ul id="serverList"></ul>
 
-    <div id="refreshButtonContainer" class="has-text-centered">
-      <button onclick="refreshData()" class="button">Refresh</button>
+    <div id="refreshButtonContainer" style="text-align: center; margin-top: 20px;">
+      <button onclick="refreshData()">Refresh</button>
     </div>
+
+    <noscript>
+      <div class="notification is-danger">
+        <p>
+          This site requires JavaScript to function properly. Please enable JavaScript in your browser settings.
+        </p>
+      </div>
+    </noscript>
   </div>
 
   <script src="resources/js/api.js"></script>

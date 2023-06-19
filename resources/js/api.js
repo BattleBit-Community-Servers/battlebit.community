@@ -1,11 +1,31 @@
 let serversData = [];
+
 let sortKey = '';
 let sortOrder = 'asc';
 let showOfficialServers = true;
 let showCommunityServers = true;
+let showRegionFilter = false;
+let selectedRegion = '';
 let sizeFilter = '';
 
-const sortServersBy = (key, region) => {
+const refreshData = () => {
+  fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
+    .then(response => response.json())
+    .then(data => {
+      serversData = data;
+      sortServersBy(sortKey);
+      updateToggleButtons();
+
+      // Calculate and display total player count
+      const totalPlayers = serversData.reduce((sum, server) => sum + server.Players, 0);
+      document.getElementById('totalPlayers').textContent = totalPlayers;
+    })
+    .catch(error => {
+      console.log('Error:', error);
+    });
+};
+
+const sortServersBy = (key) => {
   if (sortKey === key) {
     sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
   } else {
@@ -26,13 +46,18 @@ const sortServersBy = (key, region) => {
     if (sizeFilter && server.MaxPlayers.toString() !== sizeFilter) {
       return false;
     }
-    if (region && server.Region !== region) {
+    if (showRegionFilter && server.Region !== selectedRegion) {
       return false;
     }
     return true;
   });
 
   if (filteredData.length === 0) {
+    let noticeMessage = 'No servers with that size found.';
+    if (!showOfficialServers && !showCommunityServers) {
+      noticeMessage = 'Nothing to show because you hid Official and Community Servers.';
+    }
+    document.getElementById('noServersNotice').textContent = noticeMessage;
     document.getElementById('noServersNotice').style.display = 'block';
     return;
   }
@@ -60,20 +85,7 @@ const sortServersBy = (key, region) => {
   }
 
   sortedData.forEach(server => {
-    const listItem = document.createElement('li');
-    listItem.innerHTML = `
-      <strong>Name:</strong> ${server.Name}<br>
-      <strong>Map:</strong> ${server.Map}<br>
-      <strong>Players:</strong> ${server.Players}/${server.MaxPlayers}<br>
-      <strong>Region:</strong> ${server.Region}<br>
-      <strong>Game Mode:</strong> ${server.Gamemode}<br>
-      <strong>Map Time:</strong> ${server.DayNight}<br>
-    `;
-  
-    if (server.IsOfficial) {
-      listItem.classList.add('official');
-    }
-  
+    const listItem = renderServerDetails(server);
     serverList.appendChild(listItem);
   });
 
@@ -104,6 +116,14 @@ const toggleCommunityServers = () => {
   updateToggleButtons();
 };
 
+const toggleRegionFilter = () => {
+  showRegionFilter = !showRegionFilter;
+  const regionFilterSelect = document.getElementById('regionFilter');
+  regionFilterSelect.style.display = showRegionFilter ? 'inline-block' : 'none';
+  sortServersBy(sortKey);
+  updateToggleButtons();
+};
+
 const filterBySize = () => {
   const sizeFilterSelect = document.getElementById('sizeFilter');
   sizeFilter = sizeFilterSelect.value;
@@ -112,46 +132,39 @@ const filterBySize = () => {
 
 const filterByRegion = () => {
   const regionFilterSelect = document.getElementById('regionFilter');
-  const selectedRegion = regionFilterSelect.value;
-  sortServersBy(sortKey, selectedRegion);
+  selectedRegion = regionFilterSelect.value;
+  sortServersBy(sortKey);
 };
 
 const updateToggleButtons = () => {
   const toggleOfficialButton = document.getElementById('toggleOfficial');
   const toggleCommunityButton = document.getElementById('toggleCommunity');
+  const toggleRegionButton = document.getElementById('toggleRegion');
 
   toggleOfficialButton.textContent = showOfficialServers ? 'Hide Official Servers' : 'Show Official Servers';
   toggleCommunityButton.textContent = showCommunityServers ? 'Hide Community Servers' : 'Show Community Servers';
+  toggleRegionButton.textContent = showRegionFilter ? 'Hide Region Filter' : 'Show Region Filter';
 };
 
-const refreshData = () => {
-  fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
-    .then(response => response.json())
-    .then(data => {
-      serversData = data;
-      sortServersBy(sortKey);
-      updateToggleButtons();
+const renderServerDetails = (server) => {
+  const listItem = document.createElement('li');
+  listItem.innerHTML = `
+    <strong>Name:</strong> ${server.Name}<br>
+    <strong>Map:</strong> ${server.Map}<br>
+    <strong>Players:</strong> ${server.Players}/${server.MaxPlayers}<br>
+    <strong>Region:</strong> ${server.Region}<br>
+    <strong>Game Mode:</strong> ${server.Gamemode}<br>
+    <strong>Map Time:</strong> ${server.DayNight}<br>
+  `;
 
-      // Calculate and display total player count
-      const totalPlayers = serversData.reduce((sum, server) => sum + server.Players, 0);
-      document.getElementById('totalPlayers').textContent = totalPlayers;
-    })
-    .catch(error => {
-      console.log('Error:', error);
-    });
+  if (server.IsOfficial) {
+    listItem.classList.add('official');
+  } else {
+    listItem.classList.add('community');
+  }
+
+  return listItem;
 };
 
-fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
-  .then(response => response.json())
-  .then(data => {
-    serversData = data;
-    sortServersBy(''); // No initial sorting
-    updateToggleButtons();
-
-    // Calculate and display total player count
-    const totalPlayers = serversData.reduce((sum, server) => sum + server.Players, 0);
-    document.getElementById('totalPlayers').textContent = totalPlayers;
-  })
-  .catch(error => {
-    console.log('Error:', error);
-  });
+// Initial data retrieval and page setup
+refreshData();
