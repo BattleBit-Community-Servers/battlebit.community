@@ -5,7 +5,7 @@ let showOfficialServers = true;
 let showCommunityServers = true;
 let sizeFilter = '';
 
-const sortServersBy = (key) => {
+const sortServersBy = (key, region) => {
   if (sortKey === key) {
     sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
   } else {
@@ -24,6 +24,9 @@ const sortServersBy = (key) => {
       return false;
     }
     if (sizeFilter && server.MaxPlayers.toString() !== sizeFilter) {
+      return false;
+    }
+    if (region && server.Region !== region) {
       return false;
     }
     return true;
@@ -62,15 +65,15 @@ const sortServersBy = (key) => {
       <strong>Name:</strong> ${server.Name}<br>
       <strong>Map:</strong> ${server.Map}<br>
       <strong>Players:</strong> ${server.Players}/${server.MaxPlayers}<br>
-      <strong>Queue Players:</strong> ${server.QueuePlayers}<br>
       <strong>Region:</strong> ${server.Region}<br>
       <strong>Game Mode:</strong> ${server.Gamemode}<br>
+      <strong>Map Time:</strong> ${server.DayNight}<br>
     `;
-
+  
     if (server.IsOfficial) {
       listItem.classList.add('official');
     }
-
+  
     serverList.appendChild(listItem);
   });
 
@@ -105,6 +108,12 @@ const filterBySize = () => {
   const sizeFilterSelect = document.getElementById('sizeFilter');
   sizeFilter = sizeFilterSelect.value;
   sortServersBy(sortKey);
+};
+
+const filterByRegion = () => {
+  const regionFilterSelect = document.getElementById('regionFilter');
+  const selectedRegion = regionFilterSelect.value;
+  sortServersBy(sortKey, selectedRegion);
 };
 
 const updateToggleButtons = () => {
