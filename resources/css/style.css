@@ -13,8 +13,10 @@ body {
 .container {
   width: 100%;
   margin: 20px auto;
-  max-width: none;
+  max-width: 960px;
+  padding: 0 20px; /* Add this line */
 }
+
 
 h1.title {
   text-align: center;
@@ -72,8 +74,11 @@ li.community {
   margin-bottom: 20px;
 }
 
-#totalPlayersContainer {
-  font-weight: bold;
+#sortButtons,
+#filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 #sortButtons button,

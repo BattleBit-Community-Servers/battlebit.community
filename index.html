@@ -1,74 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BattleBit Community Servers Information</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" type="text/css" href="resources/css/custom.css">
+  <title>BattleBit Community Server</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="resources/css/custom.css">
 </head>
 <body>
-    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <h1 class="navbar-item title">BattleBit Community Servers</h1>
-            <div class="navbar-burger burger" data-target="navbarMenu">
-                <span></span>
-                <span></span>
-                <span></span>
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-1">BattleBit Community Servers</h1>
+        <p>Welcome to the BattleBit Community Servers organization! This organization was created to host scripts and resources that will help you run your own BattleBit community servers.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-3 has-text-centered">Visit these Repos</h2>
+      <div class="columns">
+        <div class="column">
+          <div class="card is-fullheight">
+            <div class="card-content has-text-centered">
+              <p class="title">Community Server Launcher</p>
+              <p class="subtitle">Launch your BattleBit community server.</p>
+              <a href="https://github.com/BattleBit-Community-Servers/Battlebit-Community-Server-Launcher" target="_blank">Go to Repository</a>
             </div>
+          </div>
         </div>
-        <div id="navbarMenu" class="navbar-menu">
-            <div class="navbar-start">
-                <div class="navbar-item">
-                    <div class="dropdown is-hoverable">
-                        <div class="dropdown-trigger">
-                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu1">
-                                <span>Server List</span>
-                                <span class="icon is-small">
-                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="dropdown-menu" id="dropdown-menu1" role="menu">
-                            <div class="dropdown-content">
-                                <a href="serverlist.html" class="dropdown-item">View Server List</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="navbar-item">
-                    <div class="dropdown is-hoverable">
-                        <div class="dropdown-trigger">
-                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
-                                <span>Repositories</span>
-                                <span class="icon is-small">
-                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                            <div class="dropdown-content">
-                                <a href="https://github.com/BattleBit-Community-Servers/Community-Scripts" class="dropdown-item">Community-Scripts</a>
-                                <a href="https://github.com/BattleBit-Community-Servers/Battlebit-Community-Server-Launcher" class="dropdown-item">Battlebit-Community-Server-Launcher</a>
-                                <a href="https://github.com/BattleBit-Community-Servers/files" class="dropdown-item">Files</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="column">
+          <div class="card is-fullheight">
+            <div class="card-content has-text-centered">
+              <p class="title">Community Scripts</p>
+              <p class="subtitle">Useful scripts for your BattleBit server.</p>
+              <a href="https://github.com/BattleBit-Community-Servers/Community-Scripts" target="_blank">Go to Repository</a>
             </div>
+          </div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </section>
 
-    <section class="section">
-        <div class="container">
-            <h2 class="subtitle">Welcome</h2>
-            <p>Welcome to the BattleBit Community Servers organization! This organization was created to host scripts and resources that will help you run your own BattleBit community servers.</p>
+  <div class="player-count-section">
+    <div class="container">
+      <h2 class="subtitle is-3 has-text-centered">Player Count</h2>
+      <p id="playerCount" class="title is-4">Loading...</p>
+    </div>
+  </div>
 
-            <h2 class="subtitle">Running Server Requirements</h2>
-            <p>You need a Steam account that owns the game! This can't be your main account that you play the game with!</p>
-        </div>
-    </section>
-
-    <script defer src="https://use.fontawesome.com/releases/v5.15.3/js/all.js"></script>
-    <script src="resources/js/custom.js"></script>
+  <script src="resources/js/script.js"></script>
 </body>
 </html>

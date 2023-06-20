@@ -16,7 +16,6 @@ const refreshData = () => {
       sortServersBy(sortKey);
       updateToggleButtons();
 
-      // Calculate and display total player count
       const totalPlayers = serversData.reduce((sum, server) => sum + server.Players, 0);
       document.getElementById('totalPlayers').textContent = totalPlayers;
     })
@@ -148,8 +147,20 @@ const updateToggleButtons = () => {
 
 const renderServerDetails = (server) => {
   const listItem = document.createElement('li');
-  listItem.innerHTML = `
-    <strong>Name:</strong> ${server.Name}<br>
+  listItem.classList.add('column', 'is-one-third');
+
+  const card = document.createElement('div');
+  card.classList.add('card');
+
+  const cardContent = document.createElement('div');
+  cardContent.classList.add('card-content');
+
+  const serverName = document.createElement('p');
+  serverName.classList.add('title', 'is-5');
+  serverName.textContent = server.Name;
+
+  const serverDetails = document.createElement('p');
+  serverDetails.innerHTML = `
     <strong>Map:</strong> ${server.Map}<br>
     <strong>Players:</strong> ${server.Players}/${server.MaxPlayers}<br>
     <strong>Region:</strong> ${server.Region}<br>
@@ -158,10 +169,15 @@ const renderServerDetails = (server) => {
   `;
 
   if (server.IsOfficial) {
-    listItem.classList.add('official');
+    card.classList.add('official');
   } else {
-    listItem.classList.add('community');
+    card.classList.add('community');
   }
+
+  cardContent.appendChild(serverName);
+  cardContent.appendChild(serverDetails);
+  card.appendChild(cardContent);
+  listItem.appendChild(card);
 
   return listItem;
 };

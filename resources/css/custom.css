@@ -1,23 +1,25 @@
-/* custom.css */
+.server-list-section {
+  padding: 20px;
+}
 
-.hero {
-    margin-bottom: 2rem;
-  }
-  
-  .subtitle {
-    margin-top: 1.5rem;
-  }
-  
-  .dropdown-content {
-    min-width: 200px;
-  }
-  
-  .dropdown-item {
-    padding: 0.5rem 0.75rem;
-    color: #333;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #f5f5f5;
-  }
-  
+.server-list-title {
+  margin-bottom: 10px;
+}
+
+.server-list-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3273dc;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.server-list-link:hover {
+  background-color: #2766c2;
+}
+
+.player-count-section {
+  padding: 20px;
+  text-align: center;
+}
