@@ -7,6 +7,7 @@ let showCommunityServers = true;
 let showRegionFilter = false;
 let selectedRegion = '';
 let sizeFilter = '';
+let searchQuery = '';
 
 const refreshData = () => {
   fetch('https://publicapi.battlebit.cloud/Servers/GetServerList')
@@ -46,6 +47,9 @@ const sortServersBy = (key) => {
       return false;
     }
     if (showRegionFilter && server.Region !== selectedRegion) {
+      return false;
+    }
+    if (searchQuery && !server.Name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     return true;
@@ -135,6 +139,12 @@ const filterByRegion = () => {
   sortServersBy(sortKey);
 };
 
+const filterByName = () => {
+  const searchInput = document.getElementById('searchInput');
+  searchQuery = searchInput.value;
+  sortServersBy(sortKey);
+};
+
 const updateToggleButtons = () => {
   const toggleOfficialButton = document.getElementById('toggleOfficial');
   const toggleCommunityButton = document.getElementById('toggleCommunity');
@@ -161,11 +171,11 @@ const renderServerDetails = (server) => {
 
   const serverDetails = document.createElement('p');
   serverDetails.innerHTML = `
-    <strong>Map:</strong> ${server.Map}<br>
-    <strong>Players:</strong> ${server.Players}/${server.MaxPlayers}<br>
-    <strong>Region:</strong> ${server.Region}<br>
-    <strong>Game Mode:</strong> ${server.Gamemode}<br>
-    <strong>Map Time:</strong> ${server.DayNight}<br>
+    <strong>Map</strong> ${server.Map}<br>
+    <strong>Players</strong> ${server.Players}/${server.MaxPlayers}<br>
+    <strong>Region</strong> ${server.Region}<br>
+    <strong>Game Mode</strong> ${server.Gamemode}<br>
+    <strong>Map Time</strong> ${server.DayNight}<br>
   `;
 
   if (server.IsOfficial) {

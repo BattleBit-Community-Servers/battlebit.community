@@ -14,9 +14,8 @@ body {
   width: 100%;
   margin: 20px auto;
   max-width: 960px;
-  padding: 0 20px; /* Add this line */
+  padding: 0 20px;
 }
-
 
 h1.title {
   text-align: center;
@@ -33,6 +32,9 @@ li {
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 li strong {
@@ -114,6 +116,25 @@ li.community {
 
 #serverList li {
   line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#serverList .card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#serverList .card-content {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+#serverList p {
+  margin: 0;
+  white-space: normal;
 }
 
 #serverList strong {
@@ -128,6 +149,14 @@ li.community {
 
 #serverList span {
   margin-left: 5px;
+}
+
+.field.is-grouped .control {
+  flex: 1;
+}
+
+.input.is-small {
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {
@@ -147,4 +176,9 @@ li.community {
   color: #fff;
   padding: 10px;
   text-align: center;
+}
+
+.control {
+  flex: 1;
+  margin-top: 5px
 }
