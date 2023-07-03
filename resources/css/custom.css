@@ -23,3 +23,10 @@
   padding: 20px;
   text-align: center;
 }
+
+.monospaced-fonts {
+  font-family: "Roboto Mono", monospace;
+}
+.section {
+  margin-bottom: -2rem; /* Adjust the margin-bottom value as desired */
+}
