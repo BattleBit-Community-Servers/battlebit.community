@@ -30,3 +30,12 @@
 .section {
   margin-bottom: -2rem; /* Adjust the margin-bottom value as desired */
 }
+    /* Add a custom style section for adjusting card heights */
+    .repo-cards {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch; /* Align cards to stretch to equal height */
+    }
+    .card {
+      flex: 1;
+    }
