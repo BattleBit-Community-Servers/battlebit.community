@@ -1,41 +1,75 @@
-.server-list-section {
-  padding: 20px;
+/* Import the Open Sans font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
+/* Apply the consistent background color */
+body {
+  background-color: #f0f2f5;
 }
 
-.server-list-title {
-  margin-bottom: 10px;
+.custom-bckgrnd {
+  background: linear-gradient(to right, #8b0000, #333333);
 }
 
-.server-list-link {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #3273dc;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
+/* Set the font and text color */
+body, html {
+  font-family: 'Open Sans', sans-serif;
+  color: #333;
 }
 
-.server-list-link:hover {
-  background-color: #2766c2;
+/* Center the main content */
+.container1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.player-count-section {
-  padding: 20px;
+/* Repository Box Styling */
+.repo-box {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 1rem;
   text-align: center;
 }
 
-.monospaced-fonts {
-  font-family: "Roboto Mono", monospace;
+.repo-box h3 {
+  margin-bottom: 1rem;
+  color: #333;
 }
-.section {
-  margin-bottom: -2rem; /* Adjust the margin-bottom value as desired */
+
+/* Button Styling */
+.repo-box .button {
+  margin-top: 1rem;
 }
-    /* Add a custom style section for adjusting card heights */
-    .repo-cards {
-      display: flex;
-      justify-content: space-between;
-      align-items: stretch; /* Align cards to stretch to equal height */
-    }
-    .card {
-      flex: 1;
-    }
+
+/* Scroll Down Indicator Styles */
+.scroll-down-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: bounce 2s infinite;
+}
+
+.scroll-down-indicator .icon {
+  font-size: 3rem;
+  color: #ffffff;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
