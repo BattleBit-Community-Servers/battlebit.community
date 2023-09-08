@@ -73,3 +73,11 @@ body, html {
     transform: translateY(-5px);
   }
 }
+
+/* CSS for profile pictures */
+.member-pfp {
+  width: 50px; /* Adjust the width to your preferred size */
+  height: auto; /* Maintain the image's aspect ratio */
+  float: left; /* Position the image to the left of the text */
+  margin-right: 10px; /* Add some spacing between the image and text */
+}
