@@ -14,43 +14,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to fetch contributors and cache the data
   const fetchAndCacheContributors = async () => {
     try {
-      // Check if cached data exists in localStorage
+      // Check if cached data exists in localStorage and if it's still valid
       const cachedContributors = localStorage.getItem('cachedContributors');
+      const cachedTimestamp = localStorage.getItem('cachedTimestamp');
 
-      if (cachedContributors) {
-        // Use the cached data if available
-        const cachedData = JSON.parse(cachedContributors);
-        displayContributors(cachedData);
-      } else {
-        const allContributors = [];
+      if (cachedContributors && cachedTimestamp) {
+        const currentTime = Date.now();
+        const cachedTime = parseInt(cachedTimestamp, 10);
+        const timeDiffInHours = (currentTime - cachedTime) / (1000 * 60 * 60);
 
-        for (const repoName of repoNames) {
-          // Replace 'orgName' and 'repoName' in the GitHub API URL
-          const githubApiUrl = `https://api.github.com/repos/${orgName}/${repoName}/contributors`;
-
-          // Make a GET request to the GitHub API for each repository
-          const response = await fetch(githubApiUrl);
-          const data = await response.json();
-
-          // Filter out GitHub Actions contributors, duplicates, and excluded users
-          const filteredContributors = data.filter(contributor => {
-            return (
-              !contributor.login.endsWith('[bot]') &&
-              !allContributors.some(c => c.login === contributor.login) &&
-              !excludedUsers.includes(contributor.login)
-            );
-          });
-
-          // Add filtered contributors from this repository to the combined array
-          allContributors.push(...filteredContributors);
+        // Check if the cached data is less than 2 hours old
+        if (timeDiffInHours < 2) {
+          const cachedData = JSON.parse(cachedContributors);
+          displayContributors(cachedData);
+          return;
         }
-
-        // Cache the data in localStorage
-        localStorage.setItem('cachedContributors', JSON.stringify(allContributors));
-
-        // Display the contributors
-        displayContributors(allContributors);
       }
+
+      const allContributors = [];
+
+      for (const repoName of repoNames) {
+        // Replace 'orgName' and 'repoName' in the GitHub API URL
+        const githubApiUrl = `https://api.github.com/repos/${orgName}/${repoName}/contributors`;
+
+        // Make a GET request to the GitHub API for each repository
+        const response = await fetch(githubApiUrl);
+        const data = await response.json();
+
+        // Filter out GitHub Actions contributors, duplicates, and excluded users
+        const filteredContributors = data.filter(contributor => {
+          return (
+            !contributor.login.endsWith('[bot]') &&
+            !allContributors.some(c => c.login === contributor.login) &&
+            !excludedUsers.includes(contributor.login)
+          );
+        });
+
+        // Add filtered contributors from this repository to the combined array
+        allContributors.push(...filteredContributors);
+      }
+
+      // Cache the data and current timestamp in localStorage
+      localStorage.setItem('cachedContributors', JSON.stringify(allContributors));
+      localStorage.setItem('cachedTimestamp', Date.now().toString());
+
+      // Display the contributors
+      displayContributors(allContributors);
     } catch (error) {
       console.error('Error fetching contributor data:', error);
       contributorsContainer.innerHTML = 'Error fetching contributor data.';
