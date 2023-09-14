@@ -11,51 +11,69 @@ document.addEventListener('DOMContentLoaded', () => {
   // Users to exclude from contributors
   const excludedUsers = ['JellisyWoes', 'RainOrigami'];
 
-  // Fetch and combine contributors from multiple repositories
-  const fetchContributors = async (orgName, repoNames) => {
+  // Function to fetch contributors and cache the data
+  const fetchAndCacheContributors = async () => {
     try {
-      const allContributors = [];
+      // Check if cached data exists in localStorage
+      const cachedContributors = localStorage.getItem('cachedContributors');
 
-      for (const repoName of repoNames) {
-        // Replace 'orgName' and 'repoName' in the GitHub API URL
-        const githubApiUrl = `https://api.github.com/repos/${orgName}/${repoName}/contributors`;
+      if (cachedContributors) {
+        // Use the cached data if available
+        const cachedData = JSON.parse(cachedContributors);
+        displayContributors(cachedData);
+      } else {
+        const allContributors = [];
 
-        // Make a GET request to the GitHub API for each repository
-        const response = await fetch(githubApiUrl);
-        const data = await response.json();
+        for (const repoName of repoNames) {
+          // Replace 'orgName' and 'repoName' in the GitHub API URL
+          const githubApiUrl = `https://api.github.com/repos/${orgName}/${repoName}/contributors`;
 
-        // Filter out GitHub Actions contributors, duplicates, and excluded users
-        const filteredContributors = data.filter(contributor => {
-          return (
-            !contributor.login.endsWith('[bot]') &&
-            !allContributors.some(c => c.login === contributor.login) &&
-            !excludedUsers.includes(contributor.login)
-          );
-        });
+          // Make a GET request to the GitHub API for each repository
+          const response = await fetch(githubApiUrl);
+          const data = await response.json();
 
-        // Add filtered contributors from this repository to the combined array
-        allContributors.push(...filteredContributors);
+          // Filter out GitHub Actions contributors, duplicates, and excluded users
+          const filteredContributors = data.filter(contributor => {
+            return (
+              !contributor.login.endsWith('[bot]') &&
+              !allContributors.some(c => c.login === contributor.login) &&
+              !excludedUsers.includes(contributor.login)
+            );
+          });
+
+          // Add filtered contributors from this repository to the combined array
+          allContributors.push(...filteredContributors);
+        }
+
+        // Cache the data in localStorage
+        localStorage.setItem('cachedContributors', JSON.stringify(allContributors));
+
+        // Display the contributors
+        displayContributors(allContributors);
       }
-
-      // Process the combined contributor data and build contributor elements
-      const contributorElements = allContributors.map(contributor => {
-        return `
-          <div class="contributor-box">
-            <a href="${contributor.html_url}" target="_blank">
-              <img src="${contributor.avatar_url}" alt="${contributor.login}">
-            </a>
-          </div>
-        `;
-      });
-
-      // Insert the contributor elements into the container
-      contributorsContainer.innerHTML = contributorElements.join('');
     } catch (error) {
       console.error('Error fetching contributor data:', error);
       contributorsContainer.innerHTML = 'Error fetching contributor data.';
     }
   };
 
-  // Call the fetchContributors function to fetch and display contributors from multiple repositories
-  fetchContributors(orgName, repoNames);
+  // Function to display contributors
+  const displayContributors = (contributors) => {
+    // Process the contributor data and build contributor elements
+    const contributorElements = contributors.map(contributor => {
+      return `
+        <div class="contributor-box">
+          <a href="${contributor.html_url}" target="_blank">
+            <img src="${contributor.avatar_url}" alt="${contributor.login}">
+          </a>
+        </div>
+      `;
+    });
+
+    // Insert the contributor elements into the container
+    contributorsContainer.innerHTML = contributorElements.join('');
+  };
+
+  // Call the fetchAndCacheContributors function to fetch and display contributors, using cached data if available
+  fetchAndCacheContributors();
 });
