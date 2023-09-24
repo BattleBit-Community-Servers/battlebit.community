@@ -1,22 +1,27 @@
 // Constants
-const ORG_NAME = 'BattleBit-Community-Servers';
-const REPO_NAMES = ['BattleBitAPIRunner', 'BBModules-Backend', 'BBModules-Frontend'];
-const EXCLUDED_USERS = ['JellisyWoes', 'RainOrigami'];
+const ORG_NAME = "BattleBit-Community-Servers";
+const REPO_NAMES = [
+  "BattleBitAPIRunner",
+  "BBModules-Backend",
+  "BBModules-Frontend",
+];
+const EXCLUDED_USERS = ["JellisyWoes", "RainOrigami"];
 const CACHE_EXPIRATION_HOURS = 2;
 
 // Error handling function
 const handleFetchError = (error) => {
-  const errorContainer = document.getElementById('contributors-container');
-  
-  if (error instanceof TypeError && error.message === 'Failed to fetch') {
-    errorContainer.innerHTML = 'Network error: Unable to fetch contributor data. Please check your internet connection and try again.';
-  } else if (error instanceof TypeError && error.message === 'Network request failed') {
-    errorContainer.innerHTML = 'Network request failed. Please ensure that you can access the GitHub API and try again later.';
-  } else if (error.message.includes('rate limit exceeded')) {
-    errorContainer.innerHTML = 'API rate limit exceeded. Please wait for a while or authenticate with GitHub to increase the rate limit.';
+  const errorContainer = document.getElementById("contributors-container");
+  let errorMessage = "";
+
+  if (error.message.includes("rate limit exceeded")) {
+    errorMessage =
+      "API rate limit exceeded. Please wait for a while or authenticate with GitHub to increase the rate limit.";
   } else {
-    errorContainer.innerHTML = 'An error occurred while fetching contributor data. Please try again later.';
+    errorMessage =
+      "An error occurred while fetching contributor data. Please try again later.";
   }
+
+  errorContainer.innerHTML = errorMessage;
 };
 
 // Fetch contributors function
@@ -25,7 +30,9 @@ const fetchContributors = async (repoName) => {
   const response = await fetch(githubApiUrl);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch contributors for ${repoName}: ${response.status} - ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch contributors for ${repoName}: ${response.status} - ${response.statusText}`
+    );
   }
 
   const data = await response.json();
@@ -36,7 +43,7 @@ const fetchContributors = async (repoName) => {
 const filterContributors = (data, allContributors) => {
   return data.filter((contributor) => {
     return (
-      !contributor.login.endsWith('[bot]') &&
+      !contributor.login.endsWith("[bot]") &&
       !allContributors.some((c) => c.login === contributor.login) &&
       !EXCLUDED_USERS.includes(contributor.login)
     );
@@ -46,11 +53,13 @@ const filterContributors = (data, allContributors) => {
 // Fetch and cache contributors function
 const fetchAndCacheContributors = async () => {
   try {
-    const contributorsContainer = document.getElementById('contributors-container');
+    const contributorsContainer = document.getElementById(
+      "contributors-container"
+    );
 
     // Check if cached data exists in localStorage and if it's still valid
-    const cachedContributors = localStorage.getItem('cachedContributors');
-    const cachedTimestamp = localStorage.getItem('cachedTimestamp');
+    const cachedContributors = localStorage.getItem("cachedContributors");
+    const cachedTimestamp = localStorage.getItem("cachedTimestamp");
 
     if (cachedContributors && cachedTimestamp) {
       const currentTime = Date.now();
@@ -74,8 +83,8 @@ const fetchAndCacheContributors = async () => {
     }
 
     // Cache the data and current timestamp in localStorage
-    localStorage.setItem('cachedContributors', JSON.stringify(allContributors));
-    localStorage.setItem('cachedTimestamp', Date.now().toString());
+    localStorage.setItem("cachedContributors", JSON.stringify(allContributors));
+    localStorage.setItem("cachedTimestamp", Date.now().toString());
 
     // Display the contributors
     displayContributors(allContributors);
@@ -86,7 +95,9 @@ const fetchAndCacheContributors = async () => {
 
 // Function to display contributors
 const displayContributors = (contributors) => {
-  const contributorsContainer = document.getElementById('contributors-container');
+  const contributorsContainer = document.getElementById(
+    "contributors-container"
+  );
   const contributorElements = contributors.map((contributor) => {
     return `
       <div class="contributor-box">
@@ -97,10 +108,10 @@ const displayContributors = (contributors) => {
     `;
   });
 
-  contributorsContainer.innerHTML = contributorElements.join('');
+  contributorsContainer.innerHTML = contributorElements.join("");
 };
 
 // Wrap your code in an event listener for the "DOMContentLoaded" event
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   fetchAndCacheContributors();
 });

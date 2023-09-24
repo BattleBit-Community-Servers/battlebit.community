@@ -1,5 +1,5 @@
 /* Import the Open Sans font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 
 /* Apply the consistent background color */
 body {
@@ -12,8 +12,9 @@ body {
 }
 
 /* Set the font and text color */
-body, html {
-  font-family: 'Open Sans', sans-serif;
+body,
+html {
+  font-family: "Open Sans", sans-serif;
   color: #333;
 }
 
@@ -66,7 +67,11 @@ body, html {
 
 /* Bounce animation for scroll down indicator */
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
