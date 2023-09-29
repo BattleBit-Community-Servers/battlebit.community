@@ -4,6 +4,9 @@
 /* Apply the consistent background color */
 body {
   background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 /* Custom background style for specific elements */
@@ -119,4 +122,24 @@ html {
 .contributor-box img {
   width: 100%;
   height: auto;
+}
+
+/* Styling for the snap container */
+.snap-container {
+  display: flex;
+  flex-direction: column;
+  scroll-snap-type: y mandatory;
+  height: 100vh; /* Ensure full viewport height */
+  overflow-y: scroll;
+}
+
+/* Styling for snap sections */
+.snap-section {
+  height: 100vh; /* Ensure full viewport height */
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  background-color: #f0f0f0;
 }
