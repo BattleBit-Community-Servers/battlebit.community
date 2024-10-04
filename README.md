@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# battlebit.community
 
-## Getting Started
+## Overview
 
-First, run the development server:
+**BattleBit Community Website** is a web application built using Next.js and Bun. This was made for the homepage of battlebit.community.
+
+## Installation
+
+### Install Bun
+
+First, you'll need to install Bun, a fast JavaScript runtime:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+curl -fsSL https://bun.sh/install | bash
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+After installing, make sure Bun is available in your environment path. You can verify the installation by running:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+bun -v
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+To get started, follow these steps to install and set up the project:
 
-## Learn More
+1. Clone the repository:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone https://github.com/BattleBit-Community-Servers/battlebit.community.git
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Navigate into the project directory:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```bash
+   cd battlebit.community
+   ```
 
-## Deploy on Vercel
+3. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   bun install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   *(or specify another package manager if applicable)*
+
+4. Start the application:
+
+   ```bash
+   bun run start
+   ```
+
+   *(adjust if different)*
+
+## Usage
+
+After installation, you can use the project by [brief instructions on how to use or run the project].
+
+### Example Usage
+
+- Run the application:
+  ```bash
+  bun run start
+  ```
+- Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+## Contributing
+
+Contributions are always welcome! If you'd like to contribute, follow these steps:
+
+1. Fork the repository.
+2. Create a new feature branch (`git checkout -b feature-name`).
+3. Commit your changes (`git commit -m 'Add a new feature'`).
+4. Push to the branch (`git push origin feature-name`).
+5. Create a Pull Request.
+
