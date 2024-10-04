@@ -25,3 +25,31 @@ body {
     text-wrap: balance;
   }
 }
+
+html {
+  scroll-behavior: smooth; /* Enables smooth scrolling */
+}
+
+body {
+  scroll-snap-type: y mandatory; /* Enable scroll snapping vertically */
+  overflow-y: scroll; /* Enable scrolling on the body */
+  height: 100vh; /* Ensure body takes full height */
+}
+
+section {
+  scroll-snap-align: start; /* Align each section to the top when snapping */
+  height: 100vh; /* Make each section take the full height of the viewport */
+}
+
+/* Scroll Indicator Styles */
+.scroll-down-indicator {
+  position: fixed; /* Ensures it's attached to the viewport, not the content */
+  bottom: 1rem; /* 1rem from the bottom of the viewport */
+  left: 50%; /* Center it horizontally */
+  transform: translateX(-50%); /* Correct for the center alignment */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50; /* Make sure it stays on top of other content */
+  pointer-events: none; /* Don't block interaction with elements below */
+}
