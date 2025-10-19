@@ -1,10 +1,168 @@
 #!/usr/bin/env bun
 
 import { rm, mkdir, readFile, writeFile } from "fs/promises";
-import { existsSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
+import { join } from "path";
+import { gzipSync } from "zlib";
 import postcss from "postcss";
 import tailwindcss from "@tailwindcss/postcss";
 import autoprefixer from "autoprefixer";
+
+// ============================================================================
+// Logging System
+// ============================================================================
+class RotatingLogger {
+  private logDir: string;
+  private currentLogFile: string | null = null;
+  private currentDate: string | null = null;
+  private logQueue: string[] = [];
+  private writing = false;
+
+  constructor(logDir: string) {
+    this.logDir = logDir;
+    if (!existsSync(this.logDir)) {
+      mkdirSync(this.logDir, { recursive: true });
+    }
+  }
+
+  private getFormattedDate(): string {
+    const now = new Date();
+    return now.toISOString().split('T')[0]!; // YYYY-MM-DD
+  }
+
+  private formatDateTime(): string {
+    const now = new Date();
+    return now.toISOString().replace('T', ' ').substring(0, 19);
+  }
+
+  private getLogFileName(): string {
+    const date = this.getFormattedDate();
+    if (this.currentDate !== date) {
+      this.currentDate = date;
+      this.currentLogFile = join(this.logDir, `access-${date}.log`);
+    }
+    return this.currentLogFile!;
+  }
+
+  async log(
+    req: Request,
+    status: number,
+    responseTime: number,
+    contentLength?: number
+  ): Promise<void> {
+    const ip =
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-forwarded-for") ||
+      req.headers.get("x-real-ip") ||
+      "-";
+
+    const method = req.method;
+    const url =
+      new URL(req.url).pathname + new URL(req.url).search;
+    const userAgent = req.headers.get("user-agent") || "-";
+
+    const logEntry = [
+      `[${this.formatDateTime()}]`,
+      `[${ip}]`,
+      `"${method} ${url} HTTP/1.1"`,
+      `${status}`,
+      `${contentLength || "-"}`,
+      `${responseTime.toFixed(2)}ms`,
+      `"${userAgent}"`,
+    ].join(" ") + "\n";
+
+    this.logQueue.push(logEntry);
+
+    if (!this.writing) {
+      await this.flushLogs();
+    }
+  }
+
+  private async flushLogs(): Promise<void> {
+    if (this.logQueue.length === 0 || this.writing) return;
+
+    this.writing = true;
+    const logFile = this.getLogFileName();
+
+    while (this.logQueue.length > 0) {
+      const entries = this.logQueue.splice(0, 100); // Process in batches
+      const content = entries.join("");
+
+      try {
+        // Read existing content, append, and write back
+        const existingFile = Bun.file(logFile);
+        const existingContent = await existingFile.exists()
+          ? await existingFile.text()
+          : "";
+        await Bun.write(logFile, existingContent + content);
+      } catch (error) {
+        console.error("Failed to write log:", error);
+      }
+    }
+
+    this.writing = false;
+  }
+
+  // Rotate and compress old logs (call this periodically)
+  async rotateOldLogs(): Promise<void> {
+    const files = await Array.fromAsync(
+      new Bun.Glob("access-*.log").scan({ cwd: this.logDir })
+    );
+
+    const today = this.getFormattedDate();
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const cutoffDate = twoDaysAgo.toISOString().split("T")[0]!;
+
+    for (const filename of files) {
+      if (!filename.includes(today)) {
+        const logPath = join(this.logDir, filename);
+        const gzipPath = `${logPath}.gz`;
+
+        if (!existsSync(gzipPath)) {
+          try {
+            const content = await Bun.file(logPath).text();
+            const compressed = gzipSync(content);
+            await Bun.write(gzipPath, compressed);
+            console.log(`Compressed old log: ${filename}`);
+          } catch (error) {
+            console.error(`Failed to compress log ${filename}:`, error);
+          }
+        }
+      }
+    }
+
+    // Delete compressed logs older than 2 days
+    const gzFiles = await Array.fromAsync(
+      new Bun.Glob("access-*.log.gz").scan({ cwd: this.logDir })
+    );
+
+    for (const gzFilename of gzFiles) {
+      // Extract date from filename (format: access-YYYY-MM-DD.log.gz)
+      const dateMatch = gzFilename.match(
+        /access-(\d{4}-\d{2}-\d{2})\.log\.gz/
+      );
+      if (dateMatch && dateMatch[1]) {
+        const fileDate = dateMatch[1];
+        if (fileDate < cutoffDate) {
+          const gzPath = join(this.logDir, gzFilename);
+          try {
+            if (await Bun.file(gzPath).exists()) {
+              const fs = require("fs");
+              fs.unlinkSync(gzPath);
+            }
+            console.log(`Deleted old compressed log: ${gzFilename}`);
+          } catch (error) {
+            console.error(
+              `Failed to delete compressed log ${gzFilename}:`,
+              error
+            );
+          }
+        }
+      }
+    }
+  }
+}
 
 const command = process.argv[2];
 
@@ -215,14 +373,30 @@ async function build() {
 async function serveProd() {
   const port = process.env.PORT || 3100;
 
+  // Initialize logger
+  const logger = new RotatingLogger("./logs");
+  
+  // Rotate logs every 6 hours
+  setInterval(() => {
+    logger.rotateOldLogs();
+  }, 6 * 60 * 60 * 1000);
+  
+  // Initial rotation check
+  logger.rotateOldLogs();
+
   // Start fetching contributors in the background
   startContributorsFetch();
 
   const server = Bun.serve({
     port,
     async fetch(req) {
+      const startTime = performance.now();
       const url = new URL(req.url);
       let path = url.pathname;
+      
+      let response: Response;
+      let status = 200;
+      let contentLength: number | undefined;
 
       if (path === "/") {
         path = "/index.html";
@@ -230,9 +404,15 @@ async function serveProd() {
 
       // API endpoint for contributors
       if (path === "/api/contributors") {
-        return new Response(JSON.stringify(contributorsCache), {
+        const body = JSON.stringify(contributorsCache);
+        contentLength = new Blob([body]).size;
+        status = 200;
+        response = new Response(body, {
           headers: { "Content-Type": "application/json" },
         });
+        const responseTime = performance.now() - startTime;
+        logger.log(req, status, responseTime, contentLength);
+        return response;
       }
 
       // Proxy GitHub avatars
@@ -245,26 +425,40 @@ async function serveProd() {
         // Check cache first
         if (avatarCache.has(avatarUrl)) {
           const cachedAvatar = avatarCache.get(avatarUrl)!;
-          return new Response(cachedAvatar, {
+          contentLength = cachedAvatar.byteLength;
+          status = 200;
+          response = new Response(cachedAvatar, {
             headers: { 
               "Content-Type": "image/png",
               "Cache-Control": "public, max-age=86400"
             },
           });
+          const responseTime = performance.now() - startTime;
+          logger.log(req, status, responseTime, contentLength);
+          return response;
         }
         
         // Fetch and cache if not found
         const avatarBuffer = await fetchAndCacheAvatar(avatarUrl);
         if (avatarBuffer) {
-          return new Response(avatarBuffer, {
+          contentLength = avatarBuffer.byteLength;
+          status = 200;
+          response = new Response(avatarBuffer, {
             headers: { 
               "Content-Type": "image/png",
               "Cache-Control": "public, max-age=86400"
             },
           });
+          const responseTime = performance.now() - startTime;
+          logger.log(req, status, responseTime, contentLength);
+          return response;
         }
         
-        return new Response("Avatar not found", { status: 404 });
+        status = 404;
+        response = new Response("Avatar not found", { status: 404 });
+        const responseTime = performance.now() - startTime;
+        logger.log(req, status, responseTime);
+        return response;
       }
 
       const file = Bun.file(`./dist${path}`);
@@ -283,11 +477,22 @@ async function serveProd() {
           headers["Cache-Control"] = "public, max-age=31536000, immutable";
         }
         
-        return new Response(file, { headers });
+        contentLength = file.size;
+        status = 200;
+        response = new Response(file, { headers });
+        const responseTime = performance.now() - startTime;
+        logger.log(req, status, responseTime, contentLength);
+        return response;
       }
 
       // Fallback to index.html for SPA routing
-      return new Response(Bun.file("./dist/index.html"));
+      const indexFile = Bun.file("./dist/index.html");
+      contentLength = indexFile.size;
+      status = 200;
+      response = new Response(indexFile);
+      const responseTime = performance.now() - startTime;
+      logger.log(req, status, responseTime, contentLength);
+      return response;
     },
   });
 
